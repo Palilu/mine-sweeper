@@ -16,8 +16,8 @@ import javax.validation.Valid;
  */
 @RestController
 @Slf4j
-@RequestMapping("/v1/games/")
-public class MineSweeperController {
+@RequestMapping("/api/v1/games/")
+public class MineSweeperAPIController {
 
     @Autowired
     private GameService gameService;
@@ -30,17 +30,20 @@ public class MineSweeperController {
      */
     @PostMapping
     public GameResponseAto postGame(@RequestBody @Valid GameRequestAto gameRequest) {
-        return gameService.createGame(gameRequest.getRows(), gameRequest.getColumns(), gameRequest.getMines());
+        GameResponseAto response = gameService.createGame(gameRequest.getRows(), gameRequest.getColumns(), gameRequest.getMines());
+        return response;
+
+    }
+
+    @GetMapping("{gameId}")
+    public GameResponseAto getBoard(@PathVariable("gameId") Long gameId) {
+        return gameService.getGame(gameId);
     }
 
     @PostMapping("{gameId}/moves")
     public MoveResponseAto postMove(@PathVariable("gameId") Long gameId,
                                     @RequestBody @Valid MoveRequestAto moveRequest) {
-        return gameService.makeMove(gameId, moveRequest.getType(), moveRequest.getRow(), moveRequest.getColumn());
-    }
-
-    @GetMapping("{gameId}/board")
-    public BoardResponseAto getBoard(@PathVariable("gameId") Long gameId) {
-        return gameService.getBoard(gameId);
+        MoveResponseAto response = gameService.makeMove(gameId, moveRequest.getType(), moveRequest.getRow(), moveRequest.getColumn());
+        return response;
     }
 }

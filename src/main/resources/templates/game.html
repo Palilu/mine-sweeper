@@ -1,0 +1,18 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Mine Sweeper: Create game</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <script type="text/javascript" th:src="@{/js/mineSweeper.js}"></script>
+</head>
+<body>
+    <H1 th:text="'Game #' + ${game.id} + '.'" />
+    <table>
+        <tr th:each="row: ${game.board.cells}">
+            <td th:each="cell: ${row}">
+                <a th:text="${cell.view}" th:attr="onclick=|makeMove(${game.id}, ${cell.row}, ${cell.column})|" />
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

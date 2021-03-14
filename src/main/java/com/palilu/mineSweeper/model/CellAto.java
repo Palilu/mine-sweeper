@@ -3,7 +3,7 @@ package com.palilu.mineSweeper.model;
 import lombok.*;
 
 /**
- * Board response API transfer object.
+ * Cell response API transfer object.
  *
  * @author pmendoza
  * @since 2021-03-13
@@ -13,8 +13,11 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class BoardResponseAto {
+public class CellAto {
 
-    private String[] flatCells;
-    private CellAto[][] cells;
+    private Integer row;
+
+    private Integer column;
+
+    private String view;
 }

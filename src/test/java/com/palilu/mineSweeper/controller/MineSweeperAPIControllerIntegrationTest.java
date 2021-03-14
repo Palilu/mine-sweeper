@@ -22,7 +22,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
  */
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = {MineSweeperApplication.class})
-public class MineSweeperControllerIntegrationTest {
+public class MineSweeperAPIControllerIntegrationTest {
 
     private MockMvc mockMvc;
 

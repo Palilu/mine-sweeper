@@ -8,6 +8,7 @@ import com.palilu.mineSweeper.domain.repository.MoveRepository;
 import com.palilu.mineSweeper.exceptions.GameNotFoundException;
 import com.palilu.mineSweeper.exceptions.InvalidPositionException;
 import com.palilu.mineSweeper.model.BoardResponseAto;
+import com.palilu.mineSweeper.model.CellAto;
 import com.palilu.mineSweeper.model.GameResponseAto;
 import com.palilu.mineSweeper.model.MoveResponseAto;
 import lombok.extern.slf4j.Slf4j;
@@ -54,12 +55,7 @@ public class GameServiceImpl implements GameService {
         fillMines(boardState, columns, rows, mines);
         log.info("Successfully saved game for gameId={}", game.getId());
 
-        return GameResponseAto.builder()
-                .id(game.getId())
-                .rows(rows)
-                .columns(columns)
-                .mines(mines)
-                .build();
+        return getGame(game);
     }
 
     /**
@@ -146,11 +142,12 @@ public class GameServiceImpl implements GameService {
 
         return MoveResponseAto.builder()
                 .id(move.getId())
+                .gameId(gameId)
                 .result(move.getResult())
                 .row(row)
                 .column(column)
                 .type(type)
-                .boardResponseAto(getBoard(game))
+                .boardResponseAto(getGame(game).getBoard())
                 .build();
     }
 
@@ -192,50 +189,6 @@ public class GameServiceImpl implements GameService {
                 .type(type)
                 .result(result)
                 .build());
-    }
-
-    /**
-     * Returns the cells of a game as a board.
-     *
-     * @param game The game.
-     */
-    private BoardResponseAto getBoard(Game game) {
-        String[][] cellsView = new String[game.getRows()][game.getColumns()];
-        game.getCells().forEach(cell -> cellsView[cell.getRowNumber()][cell.getColumnNumber()] = getView(cell));
-        String[] flatView = flatView(cellsView);
-        return BoardResponseAto.builder()
-                .cells(flatView)
-                .build();
-    }
-
-    private String[] flatView(String[][] cellsView) {
-        String[] flatView = new String[cellsView.length];
-        for (int i = 0; i < cellsView.length; i++) {
-            StringBuilder stringBuilder = new StringBuilder();
-            for (int j = 0; j < cellsView[0].length; j++) {
-                stringBuilder.append(cellsView[i][j]);
-            }
-            flatView[i] = stringBuilder.toString();
-        }
-        return flatView;
-    }
-
-    private String getView(Cell cell) {
-        if (cell.getIsVisible()) {
-            if (cell.getIsMine()) {
-                return "M";
-            } else if (cell.getNeighbourMines() == 0) {
-                return " ";
-            } else {
-                return cell.getNeighbourMines().toString();
-            }
-        } else {
-            if (cell.getHasFlag()) {
-                return "F";
-            } else {
-                return "▢";
-            }
-        }
     }
 
     /**
@@ -313,9 +266,67 @@ public class GameServiceImpl implements GameService {
 
     @Override
     @Transactional(readOnly = true)
-    public BoardResponseAto getBoard(Long gameId) {
+    public GameResponseAto getGame(Long gameId) {
         Game game = gameRepository.findById(gameId)
                 .orElseThrow(() -> new GameNotFoundException("Game not found for gameId={}.", gameId));
-        return getBoard(game);
+        return getGame(game);
+    }
+
+    /**
+     * Returns the cells of a game as a board.
+     *
+     * @param game The game.
+     */
+    private GameResponseAto getGame(Game game) {
+        CellAto[][] cells = new CellAto[game.getRows()][game.getColumns()];
+        game.getCells().forEach(cell -> cells[cell.getRowNumber()][cell.getColumnNumber()] = getCellAto(cell));
+        String[] flatView = flatView(cells);
+        return GameResponseAto.builder()
+                .id(game.getId())
+                .rows(game.getRows())
+                .columns(game.getColumns())
+                .mines(game.getMines())
+                .board(BoardResponseAto.builder()
+                        .flatCells(flatView)
+                        .cells(cells)
+                        .build())
+                .build();
+    }
+
+    private String[] flatView(CellAto[][] cellsView) {
+        String[] flatView = new String[cellsView.length];
+        for (int i = 0; i < cellsView.length; i++) {
+            StringBuilder stringBuilder = new StringBuilder();
+            for (int j = 0; j < cellsView[0].length; j++) {
+                stringBuilder.append(cellsView[i][j].getView());
+            }
+            flatView[i] = stringBuilder.toString();
+        }
+        return flatView;
+    }
+
+    private CellAto getCellAto(Cell cell) {
+        return CellAto.builder()
+                .row(cell.getRowNumber())
+                .column(cell.getColumnNumber())
+                .view(getCellView(cell))
+                .build();
+    }
+    private String getCellView(Cell cell) {
+        if (cell.getIsVisible()) {
+            if (cell.getIsMine()) {
+                return "M";
+            } else if (cell.getNeighbourMines() == 0) {
+                return " ";
+            } else {
+                return cell.getNeighbourMines().toString();
+            }
+        } else {
+            if (cell.getHasFlag()) {
+                return "F";
+            } else {
+                return "▢";
+            }
+        }
     }
 }

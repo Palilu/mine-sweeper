@@ -3,6 +3,7 @@ package com.palilu.mineSweeper.model;
 import com.palilu.mineSweeper.domain.MoveResult;
 import com.palilu.mineSweeper.domain.MoveType;
 import lombok.*;
+import org.springframework.hateoas.RepresentationModel;
 
 /**
  * Move response API transfer object.
@@ -15,9 +16,11 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class MoveResponseAto {
+public class MoveResponseAto extends RepresentationModel<GameResponseAto> {
 
     private Long id;
+
+    private Long gameId;
 
     private MoveType type;
 

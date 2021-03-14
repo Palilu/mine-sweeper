@@ -1,0 +1,24 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Mine Sweeper: Create game</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <script type="text/javascript" th:src="@{/js/mineSweeper.js}"></script>
+</head>
+<body>
+    <H1>Create a mine sweeper game</H1>
+        <div>
+            <label for="rows">Number of rows:</label>
+            <input id="rows" name="rows" type="text" value="10"/>
+        </div>
+        <div>
+            <label for="columns">Number of columns:</label>
+            <input id="columns" name="columns" type="text" value="10"/>
+        </div>
+        <div>
+            <label for="mines">Number of mines:</label>
+            <input id="mines" name="mines" type="text" value="10"/>
+        </div>
+        <button type="button" th:onclick="postGame()">Start Game</button>
+</body>
+</html>

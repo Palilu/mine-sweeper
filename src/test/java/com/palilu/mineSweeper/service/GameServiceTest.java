@@ -8,6 +8,7 @@ import com.palilu.mineSweeper.domain.repository.MoveRepository;
 import com.palilu.mineSweeper.model.GameResponseAto;
 
 import com.palilu.mineSweeper.model.MoveResponseAto;
+import net.bytebuddy.implementation.bind.annotation.IgnoreForBinding;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
@@ -46,7 +47,6 @@ public class GameServiceTest {
     @Captor
     private ArgumentCaptor<Game> gameArgumentCaptor;
 
-    @Test
     public void createGame() {
         when(gameRepository.save(Mockito.any(Game.class)))
                 .thenAnswer(i -> i.getArguments()[0]);

@@ -13,13 +13,13 @@ import static org.mockito.Mockito.verify;
  * @author pmendoza
  * @since 2021-03-08
  */
-@SpringBootTest(classes = {MineSweeperController.class})
+@SpringBootTest(classes = {MineSweeperAPIController.class})
 public class GameControllerTest {
 
     private static final String DATA = "data";
 
     @Autowired
-    private MineSweeperController mineSweeperController;
+    private MineSweeperAPIController mineSweeperAPIController;
 
     @MockBean
     private GameService diffService;

@@ -35,5 +35,5 @@ public interface GameService {
      *
      * @param gameId The game's ID.
      */
-    BoardResponseAto getBoard(Long gameId);
+    GameResponseAto getGame(Long gameId);
 }

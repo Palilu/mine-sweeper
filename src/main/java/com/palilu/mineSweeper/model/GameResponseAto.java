@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.hateoas.RepresentationModel;
 
 /**
  * Game response API transfer object.
@@ -15,7 +16,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @Builder
-public class GameResponseAto {
+public class GameResponseAto extends RepresentationModel<GameResponseAto> {
 
     private Long id;
 
@@ -24,4 +25,6 @@ public class GameResponseAto {
     private Integer columns;
 
     private Integer mines;
+
+    private BoardResponseAto board;
 }
