@@ -18,16 +18,15 @@
 		<java.version>12</java.version>
 		<spring-plugin-core.version>2.0.0.RELEASE</spring-plugin-core.version>
 		<swagger.version>3.0.0</swagger.version>
+		<springdoc-openapi-ui.version>1.5.2</springdoc-openapi-ui.version>
 		<jacoco-maven-plugin.version>0.8.6</jacoco-maven-plugin.version>
-		<sonar-maven-plugin.version>3.8.0.2131</sonar-maven-plugin.version>
-		<jsr305.version>3.0.2</jsr305.version>
 	</properties>
 
 	<dependencies>
 		<dependency>
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-ui</artifactId>
-			<version>1.5.2</version>
+			<version>${springdoc-openapi-ui.version}</version>
 		</dependency>
         <dependency>
 			<groupId>io.springfox</groupId>
@@ -38,11 +37,6 @@
 			<groupId>io.springfox</groupId>
 			<artifactId>springfox-swagger-ui</artifactId>
 			<version>${swagger.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.google.code.findbugs</groupId>
-			<artifactId>jsr305</artifactId>
-			<version>${jsr305.version}</version>
 		</dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -87,11 +81,6 @@
 			<scope>runtime</scope>
 			<optional>true</optional>
 		</dependency>
-		<dependency>
-			<groupId>org.json</groupId>
-			<artifactId>json</artifactId>
-			<version>20180130</version>
-		</dependency>
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
@@ -120,11 +109,6 @@
 						</goals>
 					</execution>
 				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.sonarsource.scanner.maven</groupId>
-				<artifactId>sonar-maven-plugin</artifactId>
-				<version>${sonar-maven-plugin.version}</version>
 			</plugin>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>

@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -26,6 +27,9 @@ public class Game {
     private Long id;
 
     @Column(nullable = false)
+    private LocalDateTime createDate;
+
+    @Column(nullable = false)
     private Integer columns;
 
     @Column(nullable = false)
@@ -39,4 +43,9 @@ public class Game {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "game")
     private List<Move> moves;
+
+    @PrePersist
+    public void onCreate() {
+        this.createDate = LocalDateTime.now();
+    }
 }

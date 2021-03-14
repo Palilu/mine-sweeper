@@ -4,6 +4,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 /**
  * @author pmendoza
@@ -21,6 +22,9 @@ public class Move implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
+    private LocalDateTime createDate;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "game_id")
     private Game game;
@@ -34,4 +38,9 @@ public class Move implements Serializable {
 
     @Column(nullable = false)
     private MoveResult result;
+
+    @PrePersist
+    public void onCreate() {
+        this.createDate = LocalDateTime.now();
+    }
 }
