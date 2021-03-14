@@ -22,8 +22,8 @@ public class Cell implements Serializable {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "board_id", nullable = false)
-    private Board board;
+    @JoinColumn(name = "game_id", nullable = false)
+    private Game game;
 
     @Column(nullable = false)
     private Integer rowNumber;

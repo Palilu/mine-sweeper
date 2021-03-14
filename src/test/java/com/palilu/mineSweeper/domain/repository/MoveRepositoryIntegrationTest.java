@@ -19,21 +19,18 @@ public class MoveRepositoryIntegrationTest {
     private MoveRepository moveRepository;
 
     @Autowired
-    private BoardRepository boardRepository;
+    private GameRepository gameRepository;
 
     @Test
     @Transactional
     public void testCreate() {
-        Board board = boardRepository.save(Board.builder()
+        Game game = gameRepository.save(Game.builder()
                 .rows(10)
                 .columns(10)
                 .mines(10)
                 .build());
-        Game game = Game.builder()
-                .board(board)
-                .build();
         Cell cell = Cell.builder()
-                .board(board)
+                .game(game)
                 .rowNumber(0)
                 .columnNumber(0)
                 .hasFlag(Boolean.FALSE)

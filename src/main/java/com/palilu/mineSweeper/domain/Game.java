@@ -25,9 +25,17 @@ public class Game {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "board_id", referencedColumnName = "id", nullable = false)
-    private Board board;
+    @Column(nullable = false)
+    private Integer columns;
+
+    @Column(nullable = false)
+    private Integer rows;
+
+    @Column(nullable = false)
+    private Integer mines;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "game", cascade = CascadeType.ALL)
+    private List<Cell> cells;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "game")
     private List<Move> moves;

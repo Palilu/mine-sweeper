@@ -1,7 +1,7 @@
 package com.palilu.mineSweeper.domain.repository;
 
-import com.palilu.mineSweeper.domain.Board;
 import com.palilu.mineSweeper.domain.Cell;
+import com.palilu.mineSweeper.domain.Game;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,19 +20,19 @@ public class CellRepositoryIntegrationTest {
     private CellRepository cellRepository;
 
     @Autowired
-    private BoardRepository boardRepository;
+    private GameRepository gameRepository;
 
     @Test
     @Transactional
     public void testCreate() {
-        Board board = boardRepository.save(Board.builder()
+        Game game = gameRepository.save(Game.builder()
                 .rows(2)
                 .columns(2)
                 .mines(10)
                 .build());
 
         Cell cell = Cell.builder()
-                .board(board)
+                .game(game)
                 .rowNumber(0)
                 .columnNumber(0)
                 .hasFlag(Boolean.FALSE)

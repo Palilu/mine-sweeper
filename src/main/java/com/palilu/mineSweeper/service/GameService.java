@@ -12,16 +12,16 @@ import com.palilu.mineSweeper.model.MoveResponseAto;
 public interface GameService {
 
     /**
-     * Creates a game
+     * Creates a game for the given parameters.
      *
-     * @param length The game's board length.
-     * @param width The game's board width.
+     * @param rows The number of rows for the game.
+     * @param columns The number of columns for the game.
      * @param mines The number of mines in the board;
      */
-    GameResponseAto createGame(Integer length, Integer width, Integer mines);
+    GameResponseAto createGame(Integer rows, Integer columns, Integer mines);
 
     /**
-     * makes a move a un mine sweeper game
+     * Makes a move in a mine sweeper game
      *
      * @param gameId The game's ID.
      * @param type The move's type.

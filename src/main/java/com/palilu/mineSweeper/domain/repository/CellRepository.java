@@ -1,7 +1,7 @@
 package com.palilu.mineSweeper.domain.repository;
 
-import com.palilu.mineSweeper.domain.Board;
 import com.palilu.mineSweeper.domain.Cell;
+import com.palilu.mineSweeper.domain.Game;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -14,7 +14,7 @@ import java.util.Optional;
 @Repository
 public interface CellRepository extends JpaRepository<Cell, Long> {
 
-    Optional<Cell> findByBoardAndRowNumberAndColumnNumber(Board board,
-                                                          Integer rowNumber,
-                                                          Integer columnNumber);
+    Optional<Cell> findByGameAndRowNumberAndColumnNumber(Game game,
+                                                         Integer rowNumber,
+                                                         Integer columnNumber);
 }
