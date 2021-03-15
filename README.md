@@ -18,6 +18,8 @@ I'm using [Project Lombok](https://projectlombok.org/). In order to see the code
 
 ### Testing Mine Sweeper API
 
+2.0 You can create a game going to [Mine Sweeper Home](http://localhost:8080/home)
+
 2.1 You can use [Mine Sweeper API Swagger](http://localhost:8080/swagger-ui.html)
 
 2.2 If you want to access the database you can go [here](http://localhost:8080/h2-console/) and log in using:
