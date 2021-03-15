@@ -3,12 +3,9 @@ package com.palilu.mineSweeper.service;
 import com.palilu.mineSweeper.domain.*;
 import com.palilu.mineSweeper.domain.repository.CellRepository;
 import com.palilu.mineSweeper.domain.repository.GameRepository;
-
 import com.palilu.mineSweeper.domain.repository.MoveRepository;
 import com.palilu.mineSweeper.exceptions.GameNotFoundException;
 import com.palilu.mineSweeper.exceptions.InvalidPositionException;
-import com.palilu.mineSweeper.model.BoardResponseAto;
-import com.palilu.mineSweeper.model.CellAto;
 import com.palilu.mineSweeper.model.GameResponseAto;
 import com.palilu.mineSweeper.model.MoveResponseAto;
 import lombok.extern.slf4j.Slf4j;
@@ -16,8 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 import static java.util.function.Predicate.not;
@@ -41,21 +38,25 @@ public class GameServiceImpl implements GameService {
     @Autowired
     private MoveRepository moveRepository;
 
+    @Autowired
+    private MineSweeperMapper mapper;
+
     @Override
     @Transactional
     public GameResponseAto createGame(Integer rows, Integer columns, Integer mines) {
         log.info("Saving game for rows={}, columns={}, mines={}", rows, columns, mines);
         Game game = gameRepository.save(Game.builder()
-                .columns(columns)
+                .status(GameStatus.ONGOING)
                 .rows(rows)
+                .columns(columns)
                 .mines(mines)
                 .cells(new ArrayList<>())
                 .build());
-        Cell[][] boardState = createCells(game, columns, rows);
-        fillMines(boardState, columns, rows, mines);
+        Cell[][] boardState = createCells(game, rows, columns);
+        fillMines(boardState, rows, columns, mines);
         log.info("Successfully saved game for gameId={}", game.getId());
 
-        return getGame(game);
+        return mapper.gameAto(game);
     }
 
     /**
@@ -99,7 +100,6 @@ public class GameServiceImpl implements GameService {
         }
     }
 
-
     /**
      * Puts a mine on a random location on a board.
      *
@@ -132,23 +132,14 @@ public class GameServiceImpl implements GameService {
                                     MoveType type,
                                     Integer row,
                                     Integer column) {
+        log.info("Making move for gameId={}, type={}, row={}, column={}.", gameId, type, row, column);
         Game game = gameRepository.findById(gameId)
                 .orElseThrow(() -> new GameNotFoundException("Game not found for gameId={}.", gameId));
-
         Cell cell = cellRepository.findByGameAndRowNumberAndColumnNumber(game, row, column)
                 .orElseThrow(() -> new InvalidPositionException("Invalid position for row={}, column={}", row, column));
-
         Move move = this.createMove(game, cell, type);
-
-        return MoveResponseAto.builder()
-                .id(move.getId())
-                .gameId(gameId)
-                .result(move.getResult())
-                .row(row)
-                .column(column)
-                .type(type)
-                .boardResponseAto(getGame(game).getBoard())
-                .build();
+        log.info("Successfully made move for gameId={}, type={}, row={}, column={}.", gameId, type, row, column);
+        return mapper.moveAto(move);
     }
 
     /**
@@ -174,9 +165,12 @@ public class GameServiceImpl implements GameService {
                 if (cell.getIsMine()) {
                     showAllMines(game);
                     result = MoveResult.GAME_LOST;
+                    game.setStatus(GameStatus.LOST);
+                    game.setEndDate(LocalDateTime.now());
+                    gameRepository.save(game);
                 } else {
                     clearCell(board(game), cell.getRowNumber(), cell.getColumnNumber());
-                    result = gameWon(game.getCells()) ? MoveResult.GAME_WON : MoveResult.CELL_CLEARED;
+                    result = gameWon(game) ? MoveResult.GAME_WON : MoveResult.CELL_CLEARED;
                 }
                 break;
         }
@@ -194,12 +188,19 @@ public class GameServiceImpl implements GameService {
     /**
      * Returns true when the game has been won.
      * A game is won when every cell either is visible or contains a mine.
+     *
+     * @param game The game.
      */
-    private boolean gameWon(List<Cell> cells) {
-        return cells.stream()
+    private boolean gameWon(Game game) {
+        boolean gameWon = game.getCells().stream()
                 .filter(not(Cell::getIsMine))
                 .filter(not(Cell::getIsVisible))
                 .count() == 0;
+        if (gameWon) {
+            game.setStatus(GameStatus.WON);
+            game.setEndDate(LocalDateTime.now());
+        }
+        return gameWon;
     }
 
     /**
@@ -208,7 +209,7 @@ public class GameServiceImpl implements GameService {
      *
      * @param board The board.
      * @param row The row number.
-     * @param column The columnNumberl
+     * @param column The columnNumber.
      */
     private void clearCell(Cell[][] board,
                            Integer row,
@@ -233,7 +234,7 @@ public class GameServiceImpl implements GameService {
     }
 
     /**
-     * Returns a cells of a game in the sape of a board.
+     * Returns the cells of a game as a matrix.
      *
      * @param game The game.
      */
@@ -267,66 +268,10 @@ public class GameServiceImpl implements GameService {
     @Override
     @Transactional(readOnly = true)
     public GameResponseAto getGame(Long gameId) {
+        log.info("Retrieving game for gameId={}.", gameId);
         Game game = gameRepository.findById(gameId)
                 .orElseThrow(() -> new GameNotFoundException("Game not found for gameId={}.", gameId));
-        return getGame(game);
-    }
-
-    /**
-     * Returns the cells of a game as a board.
-     *
-     * @param game The game.
-     */
-    private GameResponseAto getGame(Game game) {
-        CellAto[][] cells = new CellAto[game.getRows()][game.getColumns()];
-        game.getCells().forEach(cell -> cells[cell.getRowNumber()][cell.getColumnNumber()] = getCellAto(cell));
-        String[] flatView = flatView(cells);
-        return GameResponseAto.builder()
-                .id(game.getId())
-                .rows(game.getRows())
-                .columns(game.getColumns())
-                .mines(game.getMines())
-                .board(BoardResponseAto.builder()
-                        .flatCells(flatView)
-                        .cells(cells)
-                        .build())
-                .build();
-    }
-
-    private String[] flatView(CellAto[][] cellsView) {
-        String[] flatView = new String[cellsView.length];
-        for (int i = 0; i < cellsView.length; i++) {
-            StringBuilder stringBuilder = new StringBuilder();
-            for (int j = 0; j < cellsView[0].length; j++) {
-                stringBuilder.append(cellsView[i][j].getView());
-            }
-            flatView[i] = stringBuilder.toString();
-        }
-        return flatView;
-    }
-
-    private CellAto getCellAto(Cell cell) {
-        return CellAto.builder()
-                .row(cell.getRowNumber())
-                .column(cell.getColumnNumber())
-                .view(getCellView(cell))
-                .build();
-    }
-    private String getCellView(Cell cell) {
-        if (cell.getIsVisible()) {
-            if (cell.getIsMine()) {
-                return "M";
-            } else if (cell.getNeighbourMines() == 0) {
-                return " ";
-            } else {
-                return cell.getNeighbourMines().toString();
-            }
-        } else {
-            if (cell.getHasFlag()) {
-                return "F";
-            } else {
-                return "▢";
-            }
-        }
+        log.info("Successfully retrieved game for gameId={}.", gameId);
+        return mapper.gameAto(game);
     }
 }

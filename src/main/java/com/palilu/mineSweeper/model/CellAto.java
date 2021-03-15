@@ -19,5 +19,5 @@ public class CellAto {
 
     private Integer column;
 
-    private String view;
+    private String value;
 }

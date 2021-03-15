@@ -29,6 +29,4 @@ public class MoveResponseAto extends RepresentationModel<GameResponseAto> {
     private Integer column;
 
     private MoveResult result;
-
-    private BoardResponseAto boardResponseAto;
 }

@@ -16,6 +16,7 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 
 import java.util.List;
 import java.util.Optional;
@@ -44,9 +45,13 @@ public class GameServiceTest {
     @MockBean
     private MoveRepository moveRepository;
 
+    @SpyBean
+    private MineSweeperMapper mapper;
+
     @Captor
     private ArgumentCaptor<Game> gameArgumentCaptor;
 
+    @Test
     public void createGame() {
         when(gameRepository.save(Mockito.any(Game.class)))
                 .thenAnswer(i -> i.getArguments()[0]);
@@ -71,6 +76,8 @@ public class GameServiceTest {
         Game game = game();
         when(gameRepository.findById(1L)).thenReturn(Optional.of(game));
         when(moveRepository.save(Mockito.any(Move.class)))
+                .thenAnswer(i -> i.getArguments()[0]);
+        when(cellRepository.save(Mockito.any(Cell.class)))
                 .thenAnswer(i -> i.getArguments()[0]);
         MoveResponseAto move1 = gameService.makeMove(1L, MoveType.PUT_FLAG, 0, 0);
 

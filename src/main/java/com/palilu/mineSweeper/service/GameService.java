@@ -1,7 +1,6 @@
 package com.palilu.mineSweeper.service;
 
 import com.palilu.mineSweeper.domain.MoveType;
-import com.palilu.mineSweeper.model.BoardResponseAto;
 import com.palilu.mineSweeper.model.GameResponseAto;
 import com.palilu.mineSweeper.model.MoveResponseAto;
 
@@ -31,7 +30,7 @@ public interface GameService {
     MoveResponseAto makeMove(Long gameId, MoveType type, Integer row, Integer column);
 
     /**
-     * Returns the state of the board.
+     * Returns a game.
      *
      * @param gameId The game's ID.
      */

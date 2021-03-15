@@ -2,6 +2,7 @@ package com.palilu.mineSweeper.domain.repository;
 
 import com.palilu.mineSweeper.domain.Cell;
 import com.palilu.mineSweeper.domain.Game;
+import com.palilu.mineSweeper.domain.GameStatus;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -26,6 +27,7 @@ public class CellRepositoryIntegrationTest {
     @Transactional
     public void testCreate() {
         Game game = gameRepository.save(Game.builder()
+                .status(GameStatus.ONGOING)
                 .rows(2)
                 .columns(2)
                 .mines(10)

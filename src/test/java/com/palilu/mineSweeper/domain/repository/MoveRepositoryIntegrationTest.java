@@ -25,6 +25,7 @@ public class MoveRepositoryIntegrationTest {
     @Transactional
     public void testCreate() {
         Game game = gameRepository.save(Game.builder()
+                .status(GameStatus.ONGOING)
                 .rows(10)
                 .columns(10)
                 .mines(10)

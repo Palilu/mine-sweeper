@@ -6,13 +6,21 @@
     <script type="text/javascript" th:src="@{/js/mineSweeper.js}"></script>
 </head>
 <body>
-    <H1 th:text="'Game #' + ${game.id} + '.'" />
+    <H1 th:text="'Game #' + ${game.id} + ' is ' + ${game.status} + '.'" />
     <table>
-        <tr th:each="row: ${game.board.cells}">
+        <tr th:each="row: ${game.cells}">
             <td th:each="cell: ${row}">
-                <a th:text="${cell.view}" th:attr="onclick=|makeMove(${game.id}, ${cell.row}, ${cell.column})|" />
+                <a th:text="${cell.value}" th:attr="onclick=|makeMove(${game.id}, ${cell.row}, ${cell.column})|" />
             </td>
         </tr>
     </table>
+    <div>
+        <input type="radio" id="check-mine" name="move-type" value="CHECK_MINE" checked="checked">
+        <label for="check-mine">Check mine.</label><br>
+        <input type="radio" id="put-flag" name="move-type" value="PUT_FLAG">
+        <label for="put-flag">Put flag.</label><br>
+    </div>
+
+    <p th:text="${game.endDate != null} ? 'Game ended at ' + ${game.endDate} : ''" />
 </body>
 </html>

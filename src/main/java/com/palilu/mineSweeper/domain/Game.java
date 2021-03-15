@@ -30,6 +30,9 @@ public class Game {
     private LocalDateTime createDate;
 
     @Column(nullable = false)
+    private GameStatus status;
+
+    @Column(nullable = false)
     private Integer columns;
 
     @Column(nullable = false)
@@ -37,6 +40,9 @@ public class Game {
 
     @Column(nullable = false)
     private Integer mines;
+
+    @Column
+    private LocalDateTime endDate;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "game", cascade = CascadeType.ALL)
     private List<Cell> cells;

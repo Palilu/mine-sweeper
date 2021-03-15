@@ -8,7 +8,10 @@ function postGame() {
     };
     xhttp.open("POST", "/api/v1/games/", true);
     xhttp.setRequestHeader("Content-type", "application/json");
-    xhttp.send(JSON.stringify({rows:10, columns:10, mines:10}));
+    var rows = document.getElementById("rows").value;
+    var columns = document.getElementById("columns").value;
+    var mines = document.getElementById("mines").value;
+    xhttp.send(JSON.stringify({rows:rows, columns:columns, mines:mines}));
 }
 
 function makeMove(gameId, row, column) {
@@ -21,8 +24,13 @@ function makeMove(gameId, row, column) {
     };
     xhttp.open("POST", "/api/v1/games/" + gameId + "/moves", true);
     xhttp.setRequestHeader("Content-type", "application/json");
-    xhttp.send(JSON.stringify({type:'CHECK_MINE', row:row, column:column}));
+    var type;
+    var radios = document.getElementsByName('move-type');
+    for (var i = 0, length = radios.length; i < length; i++) {
+      if (radios[i].checked) {
+        type = radios[i].value;
+        break;
+      }
+    }
+    xhttp.send(JSON.stringify({type:type, row:row, column:column}));
 }
-
-
-
